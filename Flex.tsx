@@ -57,7 +57,7 @@ class FlexTable extends React.Component<{ component: string }> {
 
 // Main component
 class TableView extends React.Component {
-  static factory(node: TabNode) {
+  static factory(node: TabNode): React.ReactNode {
     const component = node.getComponent();
     if (component === 'table1' || component === 'table2') {
       return <FlexTable component={component} />;
@@ -65,8 +65,38 @@ class TableView extends React.Component {
     return <div>Unknown component: {component}</div>;
   }
 
+  onRenderTab(node: TabNode, renderValues: { leading: React.ReactNode; content: string }) {
+    const component = node.getComponent() as string;
+    const flexTable = <FlexTable component={component} />;
+
+    return {
+      ...renderValues,
+      leading: (
+        <>
+          <button
+            onClick={() => {
+              const table = flexTable as React.ReactElement & { props: { onAddClick: () => void } };
+              table.props.onAddClick();
+            }}
+            style={{ marginRight: '5px' }}
+          >
+            Add
+          </button>
+          <button
+            onClick={() => {
+              const table = flexTable as React.ReactElement & { props: { onSettingClick: () => void } };
+              table.props.onSettingClick();
+            }}
+          >
+            Settings
+          </button>
+        </>
+      ),
+    };
+  }
+
   render() {
-    const config: FlexLayoutConfig = {
+    const layout: FlexLayoutConfig = {
       global: {},
       borders: [],
       layout: {
@@ -79,26 +109,6 @@ class TableView extends React.Component {
                 type: 'tab',
                 name: 'Table 1',
                 component: 'table1',
-                icons: {
-                  add: {
-                    key: 'add',
-                    title: 'Add',
-                    name: 'filled',
-                    type: 'node',
-                    callback: (node: TabNode, component: FlexTable) => {
-                      component.onAddClick();
-                    },
-                  },
-                  settings: {
-                    key: 'settings',
-                    title: 'Settings',
-                    name: 'filled',
-                    type: 'node',
-                    callback: (node: TabNode, component: FlexTable) => {
-                      component.onSettingClick();
-                    },
-                  },
-                },
               },
             ],
             weight: 50,
@@ -110,37 +120,20 @@ class TableView extends React.Component {
                 type: 'tab',
                 name: 'Table 2',
                 component: 'table2',
-                icons: {
-                  add: {
-                    key: 'add',
-                    title: 'Add',
-                    name: 'filled',
-                    type: 'node',
-                    callback: (node: TabNode, component: FlexTable) => {
-                      component.onAddClick();
-                    },
-                  },
-                  settings: {
-                    key: 'settings',
-                    title: 'Settings',
-                    name: 'filled',
-                    type: 'node',
-                    callback: (node: TabNode, component: FlexTable) => {
-                      component.onSettingClick();
-                    },
-                  },
-                },
-              },
             ],
             weight: 50,
           },
         ],
-      },
+      ],
     };
 
     return (
       <div style={{ height: '500px', width: '100%', border: '1px solid gray' }}>
-        <FlexLayoutContainer config={config} factory={TableView.factory} />
+        <FlexLayoutContainer
+          model={layout}
+          factory={TableView.factory}
+          onRenderTab={this.onRenderTab}
+        />
       </div>
     );
   }
