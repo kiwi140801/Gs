@@ -1,6 +1,7 @@
 // TableView.tsx
 import React from 'react';
-import FlexLayout, { Model } from '@gs-ux-uikit-react/flexlayout';
+import { FlexLayoutContainer, FlexLayoutConfig, TabNode } from '@gs-ux-uikit-react/flexlayout';
+import { Table } from '@gs-ux-uikit-react/table';
 
 // Sample data for the tables
 const tableData: string[][] = [
@@ -9,90 +10,140 @@ const tableData: string[][] = [
   ['Row 3, Col 1', 'Row 3, Col 2'],
 ];
 
-// Function to render a table
-const renderTable = (data: string[][]) => (
-  <table style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
-    <thead>
-      <tr>
-        <th style={{ border: '1px solid black', padding: '8px' }}>Column 1</th>
-        <th style={{ border: '1px solid black', padding: '8px' }}>Column 2</th>
-      </tr>
-    </thead>
-    <tbody>
-      {data.map((row, rowIndex) => (
-        <tr key={rowIndex}>
-          {row.map((cell, cellIndex) => (
-            <td key={cellIndex} style={{ border: '1px solid black', padding: '8px' }}>
-              {cell}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
-);
-
 // FlexTable component to render individual tables
-const FlexTable = ({ component }: { component: string }) => {
-  if (component === 'table1') {
-    return renderTable(tableData.slice(0, 2)); // First 2 rows for Table 1
+class FlexTable extends React.Component<{ component: string }> {
+  onAddClick() {
+    alert(`${this.props.component} - Add icon clicked!`);
   }
-  if (component === 'table2') {
-    return renderTable(tableData.slice(2)); // Remaining rows for Table 2
-  }
-  return <div>No table found for component: {component}</div>;
-};
 
-// Factory function to map components
-const factory = (node: any) => {
-  const component = node.getComponent();
-  if (component === 'table1' || component === 'table2') {
-    return <FlexTable component={component} />;
+  onSettingClick() {
+    alert(`${this.props.component} - Setting icon clicked!`);
   }
-  return <div>Unknown component: {component}</div>;
-};
+
+  renderTable(data: string[][]) {
+    return (
+      <Table size="sm">
+        <thead>
+          <tr>
+            <th style={{ border: '1px solid black', padding: '8px' }}>Column 1</th>
+            <th style={{ border: '1px solid black', padding: '8px' }}>Column 2</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, cellIndex) => (
+                <td key={cellIndex} style={{ border: '1px solid black', padding: '8px' }}>
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    );
+  }
+
+  render() {
+    if (this.props.component === 'table1') {
+      return this.renderTable(tableData.slice(0, 2)); // First 2 rows for Table 1
+    }
+    if (this.props.component === 'table2') {
+      return this.renderTable(tableData.slice(2)); // Remaining rows for Table 2
+    }
+    return <div>No table found for component: {this.props.component}</div>;
+  }
+}
 
 // Main component
-const TableView = () => {
-  const layout = {
-    global: {},
-    borders: [],
-    layout: {
-      type: 'row',
-      children: [
-        {
-          type: 'tabset',
-          children: [
-            {
-              type: 'tab',
-              name: 'Table 1',
-              component: 'table1',
-            },
-          ],
-          weight: 50, // Equal width for both tabsets
-        },
-        {
-          type: 'tabset',
-          children: [
-            {
-              type: 'tab',
-              name: 'Table 2',
-              component: 'table2',
-            },
-          ],
-          weight: 50,
-        },
-      ],
-    },
-  };
+class TableView extends React.Component {
+  static factory(node: TabNode) {
+    const component = node.getComponent();
+    if (component === 'table1' || component === 'table2') {
+      return <FlexTable component={component} />;
+    }
+    return <div>Unknown component: {component}</div>;
+  }
 
-  const model = Model.fromJson(layout);
+  render() {
+    const config: FlexLayoutConfig = {
+      global: {},
+      borders: [],
+      layout: {
+        type: 'row',
+        children: [
+          {
+            type: 'tabset',
+            children: [
+              {
+                type: 'tab',
+                name: 'Table 1',
+                component: 'table1',
+                icons: {
+                  add: {
+                    key: 'add',
+                    title: 'Add',
+                    name: 'filled',
+                    type: 'node',
+                    callback: (node: TabNode, component: FlexTable) => {
+                      component.onAddClick();
+                    },
+                  },
+                  settings: {
+                    key: 'settings',
+                    title: 'Settings',
+                    name: 'filled',
+                    type: 'node',
+                    callback: (node: TabNode, component: FlexTable) => {
+                      component.onSettingClick();
+                    },
+                  },
+                },
+              },
+            ],
+            weight: 50,
+          },
+          {
+            type: 'tabset',
+            children: [
+              {
+                type: 'tab',
+                name: 'Table 2',
+                component: 'table2',
+                icons: {
+                  add: {
+                    key: 'add',
+                    title: 'Add',
+                    name: 'filled',
+                    type: 'node',
+                    callback: (node: TabNode, component: FlexTable) => {
+                      component.onAddClick();
+                    },
+                  },
+                  settings: {
+                    key: 'settings',
+                    title: 'Settings',
+                    name: 'filled',
+                    type: 'node',
+                    callback: (node: TabNode, component: FlexTable) => {
+                      component.onSettingClick();
+                    },
+                  },
+                },
+              },
+            ],
+            weight: 50,
+          },
+        ],
+      },
+    };
 
-  return (
-    <div style={{ height: '500px', width: '100%', border: '1px solid gray' }}>
-      <FlexLayout model={model} factory={factory} />
-    </div>
-  );
-};
+    return (
+      <div style={{ height: '500px', width: '100%', border: '1px solid gray' }}>
+        <FlexLayoutContainer config={config} factory={TableView.factory} />
+      </div>
+    );
+  }
+}
 
 export default TableView;
