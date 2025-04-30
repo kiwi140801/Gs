@@ -1,13 +1,6 @@
 // TableView.tsx
 import React from 'react';
-import { Model } from '@gs-ux-uikit-react/flexlayout';
-
-// Import FlexLayout and assert it as a React component
-import * as FlexLayoutModule from '@gs-ux-uikit-react/flexlayout';
-const FlexLayout = FlexLayoutModule.FlexLayout as unknown as React.ComponentType<{
-  model: any;
-  factory: (node: any) => JSX.Element | null;
-}>;
+import FlexLayout, { Model } from '@gs-ux-uikit-react/flexlayout';
 
 // Sample data for the tables
 const tableData: string[][] = [
@@ -96,7 +89,7 @@ const TableView = () => {
   const model = Model.fromJson(layout);
 
   return (
-    <div style={{ height: '500px', width: '100%' }}>
+    <div style={{ height: '500px', width: '100%', border: '1px solid gray' }}>
       <FlexLayout model={model} factory={factory} />
     </div>
   );
