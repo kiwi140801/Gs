@@ -1,7 +1,13 @@
 // TableView.tsx
 import React from 'react';
-import FlexLayout, { Model } from '@gs-ux-uikit-react/flexlayout';
-import 'flexlayout-react/style/dark.css'; // Note: This might need to be adjusted to match the correct stylesheet for @gs-ux-uikit-react/flexlayout
+import { Model } from '@gs-ux-uikit-react/flexlayout';
+
+// Import FlexLayout and assert it as a React component
+import * as FlexLayoutModule from '@gs-ux-uikit-react/flexlayout';
+const FlexLayout = FlexLayoutModule.FlexLayout as unknown as React.ComponentType<{
+  model: any;
+  factory: (node: any) => JSX.Element | null;
+}>;
 
 // Sample data for the tables
 const tableData: string[][] = [
