@@ -1,74 +1,99 @@
+// TableView.tsx
 import React from 'react';
-import { FlexLayoutContainer } from '@gs-ux-uitoolkit-react/flexlayout';
-import { Table } from '@gs-ux-uitoolkit-react/table';
+import FlexLayout, { Model, IJsonModel } from 'flexlayout-react';
+import 'flexlayout-react/style/dark.css'; // Optional: Dark theme for FlexLayout
 
-const FlexTables = () => {
-  const table1Data = [
-    ['Make', 'Model', 'Price'],
-    ['Toyota', 'Celica', '35000'],
-    ['Ford', 'Mondeo', '32000'],
-    ['Porsche', 'Boxter', '72000']
-  ];
+// Sample data for the tables
+const tableData: string[][] = [
+  ['Row 1, Col 1', 'Row 1, Col 2'],
+  ['Row 2, Col 1', 'Row 2, Col 2'],
+  ['Row 3, Col 1', 'Row 3, Col 2'],
+];
 
-  const table2Data = [
-    ['Name', 'Age', 'Location'],
-    ['Alice', '24', 'New York'],
-    ['Bob', '30', 'London'],
-    ['Charlie', '28', 'Tokyo']
-  ];
-
-  const renderTable = (data: string[][]) => (
-    <Table align="center" border={1} bordered={true} cellalignment="center">
-      <thead>
-        <tr>
-          {data[0].map((header, index) => (
-            <th key={index}>{header}</th>
+// Function to render a table
+const renderTable = (data: string[][]) => (
+  <table style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
+    <thead>
+      <tr>
+        <th style={{ border: '1px solid black', padding: '8px' }}>Column 1</th>
+        <th style={{ border: '1px solid black', padding: '8px' }}>Column 2</th>
+      </tr>
+    </thead>
+    <tbody>
+      {data.map((row, rowIndex) => (
+        <tr key={rowIndex}>
+          {row.map((cell, cellIndex) => (
+            <td key={cellIndex} style={{ border: '1px solid black', padding: '8px' }}>
+              {cell}
+            </td>
           ))}
         </tr>
-      </thead>
-      <tbody>
-        {data.slice(1).map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {row.map((cell, cellIndex) => (
-              <td key={cellIndex}>{cell}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  );
+      ))}
+    </tbody>
+  </table>
+);
 
-  return (
-    <FlexLayoutContainer
-      modelFromJson={{
-        global: {},
-        borders: [],
-        layout: {
-          type: 'row',
+// FlexTable component to render individual tables
+const FlexTable = ({ component }: { component: string }) => {
+  if (component === 'table1') {
+    return renderTable(tableData.slice(0, 2)); // First 2 rows for Table 1
+  }
+  if (component === 'table2') {
+    return renderTable(tableData.slice(2)); // Remaining rows for Table 2
+  }
+  return <div>No table found for component: {component}</div>;
+};
+
+// Factory function to map components
+const factory = (node: any) => {
+  const component = node.getComponent();
+  if (component === 'table1' || component === 'table2') {
+    return <FlexTable component={component} />;
+  }
+  return <div>Unknown component: {component}</div>;
+};
+
+// Main component
+const TableView = () => {
+  const layout: IJsonModel = {
+    global: {},
+    borders: [],
+    layout: {
+      type: 'row',
+      children: [
+        {
+          type: 'tabset',
           children: [
             {
-              type: 'tabset',
-              children: [{ type: 'tab', name: 'Table 1', component: 'table1' }]
+              type: 'tab',
+              name: 'Table 1',
+              component: 'table1',
             },
+          ],
+          weight: 50, // Equal width for both tabsets
+        },
+        {
+          type: 'tabset',
+          children: [
             {
-              type: 'tabset',
-              children: [{ type: 'tab', name: 'Table 2', component: 'table2' }]
-            }
-          ]
-        }
-      }}
-      factory={(node) => {
-        const component = node.getComponent();
-        if (component === 'table1') {
-          return renderTable(table1Data);
-        }
-        if (component === 'table2') {
-          return renderTable(table2Data);
-        }
-        return null;
-      }}
-    />
+              type: 'tab',
+              name: 'Table 2',
+              component: 'table2',
+            },
+          ],
+          weight: 50,
+        },
+      ],
+    },
+  };
+
+  const model = Model.fromJson(layout);
+
+  return (
+    <div style={{ height: '500px', width: '100%' }}>
+      <FlexLayout model={model} factory={factory} />
+    </div>
   );
 };
 
-export default FlexTables;
+export default TableView;
