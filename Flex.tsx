@@ -1,7 +1,7 @@
 // TableView.tsx
 import React from 'react';
-import FlexLayout, { Model, IJsonModel } from 'flexlayout-react';
-import 'flexlayout-react/style/dark.css'; // Optional: Dark theme for FlexLayout
+import FlexLayout, { Model } from '@gs-ux-uikit-react/flexlayout';
+import 'flexlayout-react/style/dark.css'; // Note: This might need to be adjusted to match the correct stylesheet for @gs-ux-uikit-react/flexlayout
 
 // Sample data for the tables
 const tableData: string[][] = [
@@ -55,7 +55,7 @@ const factory = (node: any) => {
 
 // Main component
 const TableView = () => {
-  const layout: IJsonModel = {
+  const layout = {
     global: {},
     borders: [],
     layout: {
