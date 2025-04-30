@@ -67,7 +67,7 @@ class TableView extends React.Component {
 
   onRenderTab(node: TabNode, renderValues: { leading: React.ReactNode; content: string }) {
     const component = node.getComponent() as string;
-    const flexTable = <FlexTable component={component} />;
+    const flexTableRef = React.createRef<FlexTable>();
 
     return {
       ...renderValues,
@@ -75,8 +75,9 @@ class TableView extends React.Component {
         <>
           <button
             onClick={() => {
-              const table = flexTable as React.ReactElement & { props: { onAddClick: () => void } };
-              table.props.onAddClick();
+              if (flexTableRef.current) {
+                flexTableRef.current.onAddClick();
+              }
             }}
             style={{ marginRight: '5px' }}
           >
@@ -84,14 +85,16 @@ class TableView extends React.Component {
           </button>
           <button
             onClick={() => {
-              const table = flexTable as React.ReactElement & { props: { onSettingClick: () => void } };
-              table.props.onSettingClick();
+              if (flexTableRef.current) {
+                flexTableRef.current.onSettingClick();
+              }
             }}
           >
             Settings
           </button>
         </>
       ),
+      content: renderValues.content,
     };
   }
 
@@ -104,6 +107,7 @@ class TableView extends React.Component {
         children: [
           {
             type: 'tabset',
+            weight: 50,
             children: [
               {
                 type: 'tab',
@@ -111,29 +115,25 @@ class TableView extends React.Component {
                 component: 'table1',
               },
             ],
-            weight: 50,
           },
           {
             type: 'tabset',
+            weight: 50,
             children: [
               {
                 type: 'tab',
                 name: 'Table 2',
                 component: 'table2',
+              },
             ],
-            weight: 50,
           },
         ],
-      ],
+      },
     };
 
     return (
       <div style={{ height: '500px', width: '100%', border: '1px solid gray' }}>
-        <FlexLayoutContainer
-          model={layout}
-          factory={TableView.factory}
-          onRenderTab={this.onRenderTab}
-        />
+        <FlexLayoutContainer model={layout} factory={TableView.factory} onRenderTab={this.onRenderTab} />
       </div>
     );
   }
