@@ -1,15 +1,10 @@
-// TableView.tsx
 import React from 'react';
-import { FlexLayoutContainer, FlexLayoutConfig, TabNode } from 'gs-ux-uitoolkit-react/flexlayout';
-import { table } from 'gs-ux-uitoolkit-react/table'; // Assuming this is how it's used
+import { FlexLayoutContainer, FlexLayoutConfig, TabNode, Model } from 'gs-ux-uitoolkit-react/flexlayout';
 
-// Dummy table component
 const TableComponent1 = () => (
   <table>
     <thead>
-      <tr>
-        <th>ID</th><th>Name</th>
-      </tr>
+      <tr><th>ID</th><th>Name</th></tr>
     </thead>
     <tbody>
       <tr><td>1</td><td>John</td></tr>
@@ -21,9 +16,7 @@ const TableComponent1 = () => (
 const TableComponent2 = () => (
   <table>
     <thead>
-      <tr>
-        <th>ID</th><th>Product</th>
-      </tr>
+      <tr><th>ID</th><th>Product</th></tr>
     </thead>
     <tbody>
       <tr><td>1</td><td>Laptop</td></tr>
@@ -74,10 +67,12 @@ export default class TableView extends React.Component {
   };
 
   render() {
+    const model = Model.fromJson(layout);
+
     return (
       <div style={{ height: '500px', width: '100%', border: '1px solid gray' }}>
         <FlexLayoutContainer
-          model={layout}
+          model={model}
           factory={() => undefined}
           onRenderTab={this.onRenderTab}
         />
